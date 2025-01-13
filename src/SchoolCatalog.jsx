@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 
 
 export default function SchoolCatalog() {
+  const PAGE_SIZE = 5;
   const [classes, setClasses] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredClasses, setFilteredClasses] = useState([]);
   const [sort, setSort] = useState('Trimester');
   const [direction, setDirection] = useState('asc');
+  const [page, setPage] = useState(1);
+
   const getData = () => {
     fetch('api/courses.json',
       {headers:{
@@ -46,7 +49,11 @@ export default function SchoolCatalog() {
     } else {
       return a[sort] - b[sort] * (direction === "desc" ? -1 : 1);
     }
-  })
+  });
+
+  const currentPage = sortedData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const hasMore = sortedData.length > page * PAGE_SIZE;
+  const hasLess = page > 1;
 
   return (
     <div className="school-catalog">
@@ -64,7 +71,7 @@ export default function SchoolCatalog() {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map(course => <tr key={course.courseNumber}>
+          {currentPage.map(course => <tr key={course.courseNumber}>
             <td>{course.trimester}</td>
             <td>{course.courseNumber}</td>
             <td>{course.courseName}</td>
@@ -78,8 +85,8 @@ export default function SchoolCatalog() {
         </tbody>
       </table>
       <div className="pagination">
-        <button>Previous</button>
-        <button>Next</button>
+        <button disabled={!hasLess} onClick={() => setPage(page - 1)}>Previous</button>
+        <button disabled={!hasMore} onClick={() => setPage(page + 1)}>Next</button>
       </div>
     </div>
   );
