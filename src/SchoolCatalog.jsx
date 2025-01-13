@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import {useEnrollmentContext} from "./EnrollmentContext";
 
 
 export default function SchoolCatalog() {
+  const {enrollment, setEnrollment} = useEnrollmentContext();
   const PAGE_SIZE = 5;
   const [classes, setClasses] = useState([]);
   const [search, setSearch] = useState('');
@@ -78,7 +80,7 @@ export default function SchoolCatalog() {
             <td>{course.semesterCredits}</td>
             <td>{course.totalClockHours}</td>
             <td>
-              <button>Enroll</button>
+              <button onClick={() => setEnrollment([...enrollment, course])}>Enroll</button>
             </td>
             </tr>)}
 
